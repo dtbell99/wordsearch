@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .wordtable td {
+            border: .1em solid black;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .selectedTd {
+            background-color: #8be0ee;
+        }
+
+        .unselectedTd {
+            background-color: white;
+        }
+
+        .selectedLi {
+            font-weight: bold;
+        }
+
+        .unselectedLi {
+            font-weight: normal;
+        }
+
+        .foundLi {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="title"></h1>
+    <table class="wordtable">
+        <tbody id="tableBodyLetters"></tbody>
+    </table>
+    <br />
+    <b>Words</b>
+    <ul id="wordsUl"></ul>
+    <script>
+
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        const buildLettersTable = (rows) => {
+            const table = document.getElementById("tableBodyLetters");
+            for (let r = 0; r < rows.length; r++) {
+                const row = rows[r];
+                const tableRow = table.insertRow(r);
+                for (let i = 0; i < row.length; i++) {
+                    const tableCell = tableRow.insertCell(i);
+                    tableCell.id = `pos-${r}-${i}`;
+                    tableCell.innerHTML = row[i];
+                }
+            }
+        }
+
+        const buildWordsTable = (words) => {
+            const table = document.getElementById("tableBodyWords");
+            const ul = document.getElementById("wordsUl");
+            for (const word of words) {
+                var li = document.createElement('li');
+                li.id = `${word}-li`;
+                li.innerHTML = word;
+                ul.appendChild(li);
+            }
+        }
+
+        const findWord = async (rows, wordDta) => {
+            let cntr = 0;
+            
+            for (const letter of wordDta) {
+                console.log('Looking for letter ' + letter + ' of word ' + wordDta.join(''));
+                for (let rowPos = 0; rowPos < rows.length; rowPos++) {
+                    for (let colPos = 0; colPos < rows[rowPos].length; colPos++) {
+                        const cell = document.getElementById(`pos-${rowPos}-${colPos}`);
+                        cell.className = 'selectedTd';
+                        const testLetter = rows[rowPos][colPos];
+                        console.log('testing letter: ' + testLetter);
+                        await sleep(200);
+                        if (testLetter === letter) {
+                            throw new Error('terminate');
+                        }
+                        cell.className = 'unselectedTd';
+                    }
+                }
+            }
+        }
+
+        const findWords = (rows, words) => {
+            words.forEach(wordDta => {
+                const word = wordDta.join('');
+                document.getElementById(`${word}-li`).className = 'selectedLi';
+                try {
+                    findWord(rows, wordDta);
+                } catch(err) {
+                    console.error('here again');
+                    throw new Error('t2');
+                }
+                
+                document.getElementById(`${word}-li`).className = 'unselectedLi';
+                document.getElementById(`${word}-li`).className = 'foundLi';
+            });
+        }
+
+        document.getElementById("title").innerHTML = "Wordsearch Example"; ``
+        let lettersDta = [
+            "WIHBNXBSMSBUGYA",
+            "ECDBUYMARKETING",
+            "BRCTUAALREVENUE",
+            "SNOITAREPOSELAS",
+            "IORCDPBSSWHTSPV",
+            "THCRAESERTEKRAM",
+            "EWLMCQRXOVQDXAP",
+            "WOPTNEMELBANEIA",
+            "COMMUNICATIONSR",
+            "TNETNOCUWWFGGPT",
+            "KUMARKETINGOPSN",
+            "QQUCMGNIDNARBFE",
+            "FCREATIVEWJYXHR",
+            "PUBLICRELATIONS",
+            "RMJCDBCSSYOUEDR"
+        ];
+        // Convert the strings into arrays so you can reference each letter easily
+        let rows = [];
+        lettersDta.forEach(rowString => {
+            rows.push(rowString.split(''));
+        });
+        buildLettersTable(rows);
+
+        let wordsDta = [
+            "COMMUNICATIONS",
+            "CREATIVE",
+            "MARKETRESEARCH",
+            "PUBICRELATIONS",
+            "MARKETINGOPS",
+            "MARKETING",
+            "SALESOPERATIONS",
+            "BRANDING",
+            "CRO",
+            "PARTNERS",
+            "REVENUE",
+            "ENABLEMENT",
+            "CONTENT",
+            "WEBSITE",
+            "BDR",
+            "SALESEXECUTIVES",
+        ]
+
+        buildWordsTable(wordsDta);
+
+        wordsDta.sort((a, b) => b.length - a.length)
+        let words = [];
+        wordsDta.forEach(wordString => {
+            words.push(wordString.split(''))
+        });
+
+        findWords(rows, words);
+    </script>
+</body>
+
+</html>
