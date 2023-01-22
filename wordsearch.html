@@ -26,8 +26,6 @@
         }
 
         .wordtable td {
-            /* border: .1em solid black; */
-            /* border-radius: 8px; */
             text-align: center;
             padding: 10px;
         }
@@ -114,16 +112,14 @@
             const cell = document.getElementById(pos);
             cell.style.color = color;
             cell.style.fontWeight = "bold";
-            //cell.style.backgroundColor = "#f2f2f2";
             flippedPositions.add(pos);
-            //cell.classList.add("foundCell");
         }
 
 
 
         const getLeftWord = (word, rowPos, colPos) => {
             let foundWord = "";
-            if (colPos - (word.length - 1) >= 0) { // 7 - 8
+            if (colPos - (word.length - 1) >= 0) {
                 for (let p = colPos; p > colPos - word.length; p--) {
                     foundWord = foundWord + rows[rowPos][p];
                 }
@@ -240,8 +236,6 @@
             }
             return foundWord;
         }
-
-
 
         const findWord = async (rows, word) => {
             const firstLetter = word.split('')[0];
