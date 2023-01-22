@@ -115,9 +115,8 @@
             cell.style.color = color;
             cell.style.fontWeight = "bold";
             //cell.style.backgroundColor = "#f2f2f2";
-            cell.classList.add("foundCell");
             flippedPositions.add(pos);
-            cell.classList.add("foundCell");
+            //cell.classList.add("foundCell");
         }
 
 
@@ -275,12 +274,24 @@
 
         }
 
+        const dimOtherLetters = () => {
+            for (let i = 0; i < rows.length; i++) {
+                for (let j = 0; j < rows[0].length; j++) {
+                    if (!flippedPositions.has(`pos-${i}-${j}`)) {
+                        const cell = document.getElementById(`pos-${i}-${j}`);
+                        cell.style.color = "#f1f1f1";
+                    }
+                }
+            }
+        }
+
         const findWords = async () => {
             for (const word of words) {
                 document.getElementById(`${word}-li`).className = 'selectedLi';
                 await findWord(rows, word);
                 document.getElementById(`${word}-li`).className = 'unselectedLi';
             }
+            dimOtherLetters();
         }
 
         const initialize = () => {
@@ -323,30 +334,21 @@
                 "CONTENT",
                 "WEBSITE",
                 "BDR",
-                "SALESEXECUTIVES", "BIGP", "BDR", "BUARS", "XRWS", "RSRA"
+                "SALESEXECUTIVES"
             ]
 
-            //words = ["BIGP", "BDR", "BUARS", "XRWS", "RSRA"]
-            //words = ["RSRA"];
             // words = [
-
-            // "CONTENT",
-            // "REVENUE",
-            // "CREATIVE",
-            // "WEBSITE"
+            //     "CREATIVE", "MARKETRESEARCH", "SALESEXECUTIVES", "BIGP", "BDR", "BUARS"
             // ]
-
+            buildWordsTable(words);
             words.sort((a, b) => b.length - a.length)
         }
 
-        const buildView = () => {
-            document.getElementById("title").innerHTML = "Wordsearch Example"; ``
-            buildLettersTable(rows);
-            buildWordsTable(words);
-        }
-
         initialize();
-        buildView();
+
+        document.getElementById("title").innerHTML = "Wordsearch Example"; ``
+        buildLettersTable(rows);
+
     </script>
 </body>
 
