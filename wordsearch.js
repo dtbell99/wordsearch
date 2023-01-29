@@ -175,10 +175,10 @@ const findWord = async (rows, word) => {
     for (let rowPos = 0; rowPos < rows.length; rowPos++) {
         for (let colPos = 0; colPos < rows[rowPos].length; colPos++) {
             const cell = document.getElementById(`pos-${rowPos}-${colPos}`);
-            cell.style.backgroundColor = (theme === "light") ? "white" : "black";
+            cell.style.backgroundColor = (theme === "light") ? "black" : "white";
             const testLetter = rows[rowPos][colPos];
             const color = getRandomColor();
-            await sleep(5);
+            await sleep(10);
             if (testLetter === firstLetter) {
                 const found = processDirections(word, rowPos, colPos, color);
                 if (found) {
@@ -205,14 +205,15 @@ const dimOtherLetters = () => {
     }
 }
 
-const findWords = async () => {
+const start = async () => {
+    dimOtherLetters();
     document.getElementById('startId').disabled = true;
     for (const word of words) {
         document.getElementById(`${word}-li`).className = 'selectedLi';
         await findWord(rows, word);
         document.getElementById(`${word}-li`).className = 'unselectedLi';
     }
-    dimOtherLetters();
+    //dimOtherLetters();
 }
 
 const flippedPositions = new Set();
@@ -240,7 +241,7 @@ lettersDta.forEach(rowString => {
     rows.push(rowString.split(''));
 });
 
-const words2 = [
+const words = [
     "COMMUNICATIONS",
     "CREATIVE",
     "MARKETRESEARCH",
@@ -258,15 +259,11 @@ const words2 = [
     "BDR",
     "SALESEXECUTIVES",
     "DAVID",
-    "BELL",
-    "HBO",
-    "BUG",
-    "PING",
-    "REST"
+    "BELL"
 ]
 
 //const words = ["HENNA", "COREB", "YIES", "BUARS", "RJAS", "VPM", "CEEN", "BIEU", "NERSR", "CLEC", "RYIU", "OTJA", "SLED", "SALE", "TUUN", "DCEA", "BBTI"];
-const words = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD"]
+const words2 = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD"]
 
 buildWordsTable(words);
 words.sort((a, b) => b.length - a.length)
