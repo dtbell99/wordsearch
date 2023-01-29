@@ -1,6 +1,19 @@
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const hexValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
 
+let theme = (localStorage.getItem("theme")) ? localStorage.getItem("theme") : "light";
+localStorage.setItem("theme", theme);
+
+const changeTheme = () => {
+    if (theme === "light") {
+        theme = "dark";
+    } else {
+        theme = "light";
+    }
+    localStorage.setItem("theme", theme);
+    location.reload();
+}
+
 const buildLettersTable = () => {
     const table = document.getElementById("tableBodyLetters");
     for (let r = 0; r < rows.length; r++) {
@@ -27,6 +40,7 @@ const buildWordsTable = (words) => {
 const updateFoundCell = (pos, color) => {
     const cell = document.getElementById(pos);
     cell.style.color = color;
+    cell.style.fontWeight = "bold";
     flippedPositions.add(pos);
 }
 
@@ -39,13 +53,12 @@ const getRandomColor = () => {
     return hex;
 }
 
-const getLeftWord = (word, rowPos, colPos) => {
+const getLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
     for (let p = colPos; p > colPos - word.length; p--) {
         foundWord = foundWord + rows[rowPos][p];
     }
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let p = colPos; p > colPos - word.length; p--) {
             updateFoundCell(`pos-${rowPos}-${p}`, color)
         }
@@ -53,13 +66,12 @@ const getLeftWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const getRightWord = (word, rowPos, colPos) => {
+const getRightWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
     for (let p = colPos; p < colPos + word.length; p++) {
         foundWord = foundWord + rows[rowPos][p];
     }
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let p = colPos; p < colPos + word.length; p++) {
             updateFoundCell(`pos-${rowPos}-${p}`, color);
         }
@@ -67,15 +79,12 @@ const getRightWord = (word, rowPos, colPos) => {
     return foundWord
 }
 
-const getTopWord = (word, rowPos, colPos) => {
+const getTopWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    //if (rowPos - word.length >= 0) {
     for (let p = rowPos; p > rowPos - word.length; p--) {
         foundWord = foundWord + rows[p][colPos];
     }
-    //}
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let p = rowPos; p > rowPos - word.length; p--) {
             updateFoundCell(`pos-${p}-${colPos}`, color)
         }
@@ -83,15 +92,12 @@ const getTopWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const getBottomWord = (word, rowPos, colPos) => {
+const getBottomWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    if (rowPos + word.length <= rows.length) {
-        for (let p = rowPos; p < rowPos + word.length; p++) {
-            foundWord = foundWord + rows[p][colPos];
-        }
+    for (let p = rowPos; p < rowPos + word.length; p++) {
+        foundWord = foundWord + rows[p][colPos];
     }
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let p = rowPos; p < rowPos + word.length; p++) {
             updateFoundCell(`pos-${p}-${colPos}`, color);
         }
@@ -99,15 +105,12 @@ const getBottomWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const getBottomRightWord = (word, rowPos, colPos) => {
+const getBottomRightWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    if (rowPos + word.length <= rows.length && colPos + word.length <= rows[0].length) {
-        for (let i = 0; i < word.length; i++) {
-            foundWord = foundWord + rows[rowPos + i][colPos + i];
-        }
+    for (let i = 0; i < word.length; i++) {
+        foundWord = foundWord + rows[rowPos + i][colPos + i];
     }
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let i = 0; i < word.length; i++) {
             updateFoundCell(`pos-${rowPos + i}-${colPos + i}`, color);
         }
@@ -115,15 +118,12 @@ const getBottomRightWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const getBottomLeftWord = (word, rowPos, colPos) => {
+const getBottomLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    if (rowPos + word.length <= rows.length && colPos - word.length >= 0) {
-        for (let i = 0; i < word.length; i++) {
-            foundWord = foundWord + rows[rowPos + i][colPos - i];
-        }
+    for (let i = 0; i < word.length; i++) {
+        foundWord = foundWord + rows[rowPos + i][colPos - i];
     }
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let i = 0; i < word.length; i++) {
             updateFoundCell(`pos-${rowPos + i}-${colPos - i}`, color);
         }
@@ -131,15 +131,12 @@ const getBottomLeftWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const getTopRightWord = (word, rowPos, colPos) => {
+const getTopRightWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    //if (rowPos - word.length >= 0 && colPos + word.length <= rows[0].length) {
     for (let i = 0; i < word.length; i++) {
         foundWord = foundWord + rows[rowPos - i][colPos + i];
     }
-    //}
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let i = 0; i < word.length; i++) {
             updateFoundCell(`pos-${rowPos - i}-${colPos + i}`, color);
         }
@@ -147,13 +144,12 @@ const getTopRightWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const getTopLeftWord = (word, rowPos, colPos) => {
+const getTopLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
     for (let i = 0; i < word.length; i++) {
         foundWord = foundWord + rows[rowPos - i][colPos - i];
     }
     if (word === foundWord) {
-        const color = getRandomColor();
         for (let i = 0; i < word.length; i++) {
             updateFoundCell(`pos-${rowPos - i}-${colPos - i}`, color);
         }
@@ -161,15 +157,15 @@ const getTopLeftWord = (word, rowPos, colPos) => {
     return foundWord;
 }
 
-const processDirections = (word, rowPos, colPos) => {
-    const leftWord = (colPos - (word.length - 1) >= 0) ? getLeftWord(word, rowPos, colPos) : undefined;
-    const rightWord = (colPos + word.length <= rows[0].length) ? getRightWord(word, rowPos, colPos) : undefined;
-    const topWord = (rowPos - word.length >= 0) ? getTopWord(word, rowPos, colPos) : undefined;
-    const bottomWord = getBottomWord(word, rowPos, colPos);
-    const bottomRightWord = getBottomRightWord(word, rowPos, colPos);
-    const bottomLeftWord = getBottomLeftWord(word, rowPos, colPos);
-    const topRightWord = (rowPos - word.length >= 0 && colPos + word.length <= rows[0].length) ? getTopRightWord(word, rowPos, colPos) : undefined;
-    const topLeftWord = (rowPos - word.length >= 0 && colPos - word.length >= 0) ? getTopLeftWord(word, rowPos, colPos) : undefined;
+const processDirections = (word, rowPos, colPos, color) => {
+    const leftWord = (colPos - (word.length - 1) >= 0) ? getLeftWord(word, rowPos, colPos, color) : undefined;
+    const rightWord = (colPos + word.length <= rows[0].length) ? getRightWord(word, rowPos, colPos, color) : undefined;
+    const topWord = ((rowPos + 1) - word.length >= 0) ? getTopWord(word, rowPos, colPos, color) : undefined;
+    const bottomWord = (rowPos + word.length <= rows.length) ? getBottomWord(word, rowPos, colPos, color) : undefined;
+    const bottomRightWord = (rowPos + word.length <= rows.length && colPos + word.length <= rows[0].length) ? getBottomRightWord(word, rowPos, colPos, color) : undefined;
+    const bottomLeftWord = (rowPos + word.length <= rows.length && colPos - word.length >= 0) ? getBottomLeftWord(word, rowPos, colPos, color) : undefined;
+    const topRightWord = ((rowPos + 1) - word.length >= 0 && colPos + word.length <= rows[0].length) ? getTopRightWord(word, rowPos, colPos, color) : undefined;
+    const topLeftWord = ((rowPos + 1) - word.length >= 0 && (colPos + 1) - word.length >= 0) ? getTopLeftWord(word, rowPos, colPos, color) : undefined;
     return (leftWord === word || rightWord === word || topWord === word || bottomWord === word || bottomRightWord === word || bottomLeftWord === word || topRightWord === word || topLeftWord === word);
 }
 
@@ -179,18 +175,21 @@ const findWord = async (rows, word) => {
     for (let rowPos = 0; rowPos < rows.length; rowPos++) {
         for (let colPos = 0; colPos < rows[rowPos].length; colPos++) {
             const cell = document.getElementById(`pos-${rowPos}-${colPos}`);
-            cell.style.backgroundColor = '#f1f1f1';
+            cell.style.backgroundColor = (theme === "light") ? "white" : "black";
             const testLetter = rows[rowPos][colPos];
+            const color = getRandomColor();
             await sleep(5);
             if (testLetter === firstLetter) {
-                const found = processDirections(word, rowPos, colPos);
+                const found = processDirections(word, rowPos, colPos, color);
                 if (found) {
-                    document.getElementById(`${word}-li`).style.textDecoration = "line-through";
-                    cell.style.backgroundColor = "black"
+                    const sideWord = document.getElementById(`${word}-li`);
+                    sideWord.style.textDecoration = "line-through";
+                    sideWord.style.color = color;
+                    cell.style.backgroundColor = (theme === "light") ? "white" : "black";
                     break firstloop;
                 }
             }
-            cell.style.backgroundColor = "black"
+            cell.style.backgroundColor = (theme === "light") ? "white" : "black";
         }
     }
 }
@@ -200,7 +199,7 @@ const dimOtherLetters = () => {
         for (let j = 0; j < rows[0].length; j++) {
             if (!flippedPositions.has(`pos-${i}-${j}`)) {
                 const cell = document.getElementById(`pos-${i}-${j}`);
-                cell.style.color = "black";
+                cell.style.color = (theme === "light") ? "#eeeeee" : "#222222";
             }
         }
     }
@@ -219,21 +218,21 @@ const findWords = async () => {
 const flippedPositions = new Set();
 
 let lettersDta = [
-    "WIHBNXBSMSBUGYA",
-    "ECDBUYMARKETING",
-    "BRCTUAALREVENUE",
-    "SNOITAREPOSELAS",
-    "IORCDPBSSWHTSPV",
-    "THCRAESERTEKRAM",
-    "EWLMCQRXOVQDXAP",
-    "WOPTNEMELBANEIA",
-    "COMMUNICATIONSR",
-    "TNETNOCUWWFGGPT",
-    "KUMARKETINGOPSN",
-    "QQUCMGNIDNARBFE",
-    "FCREATIVEWJYXHR",
-    "PUBLICRELATIONS",
-    "RMJCDBCSSYOUEDR"
+    "BWIHBNXBSMSBUGYA",
+    "AECDBUYMARKETING",
+    "LBRCTUAALREVENUE",
+    "LSNOITAREPOSELAS",
+    "EIORCDPBSSWHTSPV",
+    "BTHCRAESERTEKRAM",
+    "DEWLMCQRXOVQDXAP",
+    "CWOPTNEMELBANEIA",
+    "BCOMMUNICATIONSR",
+    "ATNETNOCUWWFGGPT",
+    "DKUMARKETINGOPSN",
+    "IQQUCMGNIDNARBFE",
+    "VFCREATIVEWJYXHR",
+    "APUBLICRELATIONS",
+    "DRMJCDBCSSYOUEDR"
 ];
 // Convert the strings into arrays so you can reference each letter easily
 const rows = [];
@@ -241,7 +240,7 @@ lettersDta.forEach(rowString => {
     rows.push(rowString.split(''));
 });
 
-const words = [
+const words2 = [
     "COMMUNICATIONS",
     "CREATIVE",
     "MARKETRESEARCH",
@@ -259,10 +258,21 @@ const words = [
     "BDR",
     "SALESEXECUTIVES",
     "DAVID",
-    "BELL"
+    "BELL",
+    "HBO",
+    "BUG",
+    "PING",
+    "REST"
 ]
+
+//const words = ["HENNA", "COREB", "YIES", "BUARS", "RJAS", "VPM", "CEEN", "BIEU", "NERSR", "CLEC", "RYIU", "OTJA", "SLED", "SALE", "TUUN", "DCEA", "BBTI"];
+const words = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD"]
 
 buildWordsTable(words);
 words.sort((a, b) => b.length - a.length)
 document.getElementById("title").innerHTML = "Wordsearch Example"; ``
 buildLettersTable();
+if (theme === 'dark') {
+    document.body.style.backgroundColor = "black";
+    document.body.style.color = "#f1f1f1";
+}

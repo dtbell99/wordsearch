@@ -9,13 +9,15 @@
     <h1 id="title"></h1>
 
     <center>
+        <button onclick="location.reload()" class="clear">Reload</button>
+        &nbsp;
         <button onclick="findWords()" class="start" id="startId">Start</button>
         &nbsp;
-        <button onclick="location.reload()" class="clear">Restart</button>
+        <button onclick="changeTheme()" class="clear">Change Theme</button>
     </center>
     <div class="parent">
         <div class="child">
-            <table class="wordtable">
+            <table class="wordtable" id="wordTable">
                 <tbody id="tableBodyLetters"></tbody>
             </table>
         </div>
