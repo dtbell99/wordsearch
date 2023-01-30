@@ -2,7 +2,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const hexValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
 const flippedPositions = new Set();
 let started = false;
-const sleepMilliseconds = 0;
+const sleepMilliseconds = 10;
 
 let theme = (localStorage.getItem("theme")) ? localStorage.getItem("theme") : "dark";
 localStorage.setItem("theme", theme);
