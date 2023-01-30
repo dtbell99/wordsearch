@@ -11,7 +11,3 @@ This is a fun web program I created to complete a word search.
 ## Screenshot
 
 <img src="screenshot.png"/>
-
-## Demo
-
-![Demo Video](demo.mov)
