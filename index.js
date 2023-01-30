@@ -61,7 +61,6 @@ const getRandomColor = () => {
 const getLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
     if (colPos - (word.length - 1) >= 0) {
-
         for (let p = colPos; p > colPos - word.length; p--) {
             foundWord = foundWord + rows[rowPos][p];
         }
@@ -293,17 +292,15 @@ let words = [
     "BELL"
 ]
 
-
-
-const words2 = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD",
-    "HENNA", "COREB", "YIES", "BUARS", "RJAS", "VPM", "CEEN", "BIEU", "NERSR", "CLEC",
-    "RYIU", "OTJA", "SLED", "SALE", "TUUN", "DCEA"];
-
+// Additional words that text all directions
+//const words2 = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD",
+//    "HENNA", "COREB", "YIES", "BUARS", "RJAS", "VPM", "CEEN", "BIEU", "NERSR", "CLEC",
+//    "RYIU", "OTJA", "SLED", "SALE", "TUUN", "DCEA"];
 //words = [...words, ...words2];
 
 buildWordsTable(words);
 words.sort((a, b) => b.length - a.length)
-document.getElementById("title").innerHTML = "WordSearch"; ``
+document.getElementById("title").innerHTML = "WordSearch";
 buildLettersTable();
 if (theme === 'dark') {
     document.body.style.backgroundColor = "black";
