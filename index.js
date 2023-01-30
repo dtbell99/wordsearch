@@ -1,6 +1,8 @@
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const hexValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
 const flippedPositions = new Set();
+let started = false;
+const sleepMilliseconds = 0;
 
 let theme = (localStorage.getItem("theme")) ? localStorage.getItem("theme") : "dark";
 localStorage.setItem("theme", theme);
@@ -58,12 +60,15 @@ const getRandomColor = () => {
 
 const getLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let p = colPos; p > colPos - word.length; p--) {
-        foundWord = foundWord + rows[rowPos][p];
-    }
-    if (word === foundWord) {
+    if (colPos - (word.length - 1) >= 0) {
+
         for (let p = colPos; p > colPos - word.length; p--) {
-            updateFoundCell(`pos-${rowPos}-${p}`, color)
+            foundWord = foundWord + rows[rowPos][p];
+        }
+        if (word === foundWord) {
+            for (let p = colPos; p > colPos - word.length; p--) {
+                updateFoundCell(`pos-${rowPos}-${p}`, color)
+            }
         }
     }
     return foundWord;
@@ -71,25 +76,29 @@ const getLeftWord = (word, rowPos, colPos, color) => {
 
 const getRightWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let p = colPos; p < colPos + word.length; p++) {
-        foundWord = foundWord + rows[rowPos][p];
-    }
-    if (word === foundWord) {
+    if (colPos + word.length <= rows[0].length) {
         for (let p = colPos; p < colPos + word.length; p++) {
-            updateFoundCell(`pos-${rowPos}-${p}`, color);
+            foundWord = foundWord + rows[rowPos][p];
+        }
+        if (word === foundWord) {
+            for (let p = colPos; p < colPos + word.length; p++) {
+                updateFoundCell(`pos-${rowPos}-${p}`, color);
+            }
         }
     }
-    return foundWord
+    return foundWord;
 }
 
 const getTopWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let p = rowPos; p > rowPos - word.length; p--) {
-        foundWord = foundWord + rows[p][colPos];
-    }
-    if (word === foundWord) {
+    if ((rowPos + 1) - word.length >= 0) {
         for (let p = rowPos; p > rowPos - word.length; p--) {
-            updateFoundCell(`pos-${p}-${colPos}`, color)
+            foundWord = foundWord + rows[p][colPos];
+        }
+        if (word === foundWord) {
+            for (let p = rowPos; p > rowPos - word.length; p--) {
+                updateFoundCell(`pos-${p}-${colPos}`, color)
+            }
         }
     }
     return foundWord;
@@ -97,12 +106,14 @@ const getTopWord = (word, rowPos, colPos, color) => {
 
 const getBottomWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let p = rowPos; p < rowPos + word.length; p++) {
-        foundWord = foundWord + rows[p][colPos];
-    }
-    if (word === foundWord) {
+    if (rowPos + word.length <= rows.length) {
         for (let p = rowPos; p < rowPos + word.length; p++) {
-            updateFoundCell(`pos-${p}-${colPos}`, color);
+            foundWord = foundWord + rows[p][colPos];
+        }
+        if (word === foundWord) {
+            for (let p = rowPos; p < rowPos + word.length; p++) {
+                updateFoundCell(`pos-${p}-${colPos}`, color);
+            }
         }
     }
     return foundWord;
@@ -110,12 +121,14 @@ const getBottomWord = (word, rowPos, colPos, color) => {
 
 const getBottomRightWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let i = 0; i < word.length; i++) {
-        foundWord = foundWord + rows[rowPos + i][colPos + i];
-    }
-    if (word === foundWord) {
+    if (rowPos + word.length <= rows.length && colPos + word.length <= rows[0].length) {
         for (let i = 0; i < word.length; i++) {
-            updateFoundCell(`pos-${rowPos + i}-${colPos + i}`, color);
+            foundWord = foundWord + rows[rowPos + i][colPos + i];
+        }
+        if (word === foundWord) {
+            for (let i = 0; i < word.length; i++) {
+                updateFoundCell(`pos-${rowPos + i}-${colPos + i}`, color);
+            }
         }
     }
     return foundWord;
@@ -123,12 +136,14 @@ const getBottomRightWord = (word, rowPos, colPos, color) => {
 
 const getBottomLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let i = 0; i < word.length; i++) {
-        foundWord = foundWord + rows[rowPos + i][colPos - i];
-    }
-    if (word === foundWord) {
+    if (rowPos + word.length <= rows.length && colPos - word.length >= 0) {
         for (let i = 0; i < word.length; i++) {
-            updateFoundCell(`pos-${rowPos + i}-${colPos - i}`, color);
+            foundWord = foundWord + rows[rowPos + i][colPos - i];
+        }
+        if (word === foundWord) {
+            for (let i = 0; i < word.length; i++) {
+                updateFoundCell(`pos-${rowPos + i}-${colPos - i}`, color);
+            }
         }
     }
     return foundWord;
@@ -136,12 +151,14 @@ const getBottomLeftWord = (word, rowPos, colPos, color) => {
 
 const getTopRightWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let i = 0; i < word.length; i++) {
-        foundWord = foundWord + rows[rowPos - i][colPos + i];
-    }
-    if (word === foundWord) {
+    if ((rowPos + 1) - word.length >= 0 && colPos + word.length <= rows[0].length) {
         for (let i = 0; i < word.length; i++) {
-            updateFoundCell(`pos-${rowPos - i}-${colPos + i}`, color);
+            foundWord = foundWord + rows[rowPos - i][colPos + i];
+        }
+        if (word === foundWord) {
+            for (let i = 0; i < word.length; i++) {
+                updateFoundCell(`pos-${rowPos - i}-${colPos + i}`, color);
+            }
         }
     }
     return foundWord;
@@ -149,27 +166,31 @@ const getTopRightWord = (word, rowPos, colPos, color) => {
 
 const getTopLeftWord = (word, rowPos, colPos, color) => {
     let foundWord = "";
-    for (let i = 0; i < word.length; i++) {
-        foundWord = foundWord + rows[rowPos - i][colPos - i];
-    }
-    if (word === foundWord) {
+    if ((rowPos + 1) - word.length >= 0 && (colPos + 1) - word.length >= 0) {
         for (let i = 0; i < word.length; i++) {
-            updateFoundCell(`pos-${rowPos - i}-${colPos - i}`, color);
+            foundWord = foundWord + rows[rowPos - i][colPos - i];
+        }
+        if (word === foundWord) {
+            for (let i = 0; i < word.length; i++) {
+                updateFoundCell(`pos-${rowPos - i}-${colPos - i}`, color);
+            }
         }
     }
     return foundWord;
 }
 
 const processDirections = (word, rowPos, colPos, color) => {
-    const leftWord = (colPos - (word.length - 1) >= 0) ? getLeftWord(word, rowPos, colPos, color) : undefined;
-    const rightWord = (colPos + word.length <= rows[0].length) ? getRightWord(word, rowPos, colPos, color) : undefined;
-    const topWord = ((rowPos + 1) - word.length >= 0) ? getTopWord(word, rowPos, colPos, color) : undefined;
-    const bottomWord = (rowPos + word.length <= rows.length) ? getBottomWord(word, rowPos, colPos, color) : undefined;
-    const bottomRightWord = (rowPos + word.length <= rows.length && colPos + word.length <= rows[0].length) ? getBottomRightWord(word, rowPos, colPos, color) : undefined;
-    const bottomLeftWord = (rowPos + word.length <= rows.length && colPos - word.length >= 0) ? getBottomLeftWord(word, rowPos, colPos, color) : undefined;
-    const topRightWord = ((rowPos + 1) - word.length >= 0 && colPos + word.length <= rows[0].length) ? getTopRightWord(word, rowPos, colPos, color) : undefined;
-    const topLeftWord = ((rowPos + 1) - word.length >= 0 && (colPos + 1) - word.length >= 0) ? getTopLeftWord(word, rowPos, colPos, color) : undefined;
-    return (leftWord === word || rightWord === word || topWord === word || bottomWord === word || bottomRightWord === word || bottomLeftWord === word || topRightWord === word || topLeftWord === word);
+    const leftWord = getLeftWord(word, rowPos, colPos, color);
+    const rightWord = getRightWord(word, rowPos, colPos, color);
+    const topWord = getTopWord(word, rowPos, colPos, color)
+    const bottomWord = getBottomWord(word, rowPos, colPos, color);
+    const bottomRightWord = getBottomRightWord(word, rowPos, colPos, color);
+    const bottomLeftWord = getBottomLeftWord(word, rowPos, colPos, color);
+    const topRightWord = getTopRightWord(word, rowPos, colPos, color);
+    const topLeftWord = getTopLeftWord(word, rowPos, colPos, color);
+    return (leftWord === word || rightWord === word || topWord === word ||
+        bottomWord === word || bottomRightWord === word || bottomLeftWord === word ||
+        topRightWord === word || topLeftWord === word);
 }
 
 const findWord = async (rows, word) => {
@@ -181,7 +202,9 @@ const findWord = async (rows, word) => {
             cell.style.backgroundColor = (theme === "light") ? "black" : "white";
             const testLetter = rows[rowPos][colPos];
             const color = getRandomColor();
-            await sleep(10);
+            if (sleepMilliseconds > 0) {
+                await sleep(sleepMilliseconds);
+            }
             if (testLetter === firstLetter) {
                 const found = processDirections(word, rowPos, colPos, color);
                 if (found) {
@@ -207,8 +230,6 @@ const dimLetters = () => {
         }
     }
 }
-
-let started = false;
 
 const start = async () => {
     if (started) {
@@ -251,7 +272,7 @@ lettersDta.forEach(rowString => {
     rows.push(rowString.split(''));
 });
 
-const words = [
+let words = [
     "COMMUNICATIONS",
     "CREATIVE",
     "MARKETRESEARCH",
@@ -272,8 +293,13 @@ const words = [
     "BELL"
 ]
 
-//const words = ["HENNA", "COREB", "YIES", "BUARS", "RJAS", "VPM", "CEEN", "BIEU", "NERSR", "CLEC", "RYIU", "OTJA", "SLED", "SALE", "TUUN", "DCEA", "BBTI"];
-const words2 = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD"]
+
+
+const words2 = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD",
+    "HENNA", "COREB", "YIES", "BUARS", "RJAS", "VPM", "CEEN", "BIEU", "NERSR", "CLEC",
+    "RYIU", "OTJA", "SLED", "SALE", "TUUN", "DCEA"];
+
+//words = [...words, ...words2];
 
 buildWordsTable(words);
 words.sort((a, b) => b.length - a.length)
