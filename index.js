@@ -1,8 +1,11 @@
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const hexValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
+const flippedPositions = new Set();
 
-let theme = (localStorage.getItem("theme")) ? localStorage.getItem("theme") : "light";
+let theme = (localStorage.getItem("theme")) ? localStorage.getItem("theme") : "dark";
 localStorage.setItem("theme", theme);
+
+document.getElementById("theme").innerHTML = (theme === "light") ? "Light Theme" : "Dark Theme";
 
 const changeTheme = () => {
     if (theme === "light") {
@@ -194,7 +197,7 @@ const findWord = async (rows, word) => {
     }
 }
 
-const dimOtherLetters = () => {
+const dimLetters = () => {
     for (let i = 0; i < rows.length; i++) {
         for (let j = 0; j < rows[0].length; j++) {
             if (!flippedPositions.has(`pos-${i}-${j}`)) {
@@ -205,18 +208,25 @@ const dimOtherLetters = () => {
     }
 }
 
+let started = false;
+
 const start = async () => {
-    dimOtherLetters();
-    document.getElementById('startId').disabled = true;
+    if (started) {
+        location.reload();
+        return;
+    }
+    started = true;
+    dimLetters();
+    const btn = document.getElementById('startId');
+    btn.style.backgroundColor = "#f1f1f1";
+    btn.style.color = "black";
+    btn.innerHTML = "Reload";
     for (const word of words) {
         document.getElementById(`${word}-li`).className = 'selectedLi';
         await findWord(rows, word);
         document.getElementById(`${word}-li`).className = 'unselectedLi';
     }
-    //dimOtherLetters();
 }
-
-const flippedPositions = new Set();
 
 let lettersDta = [
     "BWIHBNXBSMSBUGYA",
@@ -267,7 +277,7 @@ const words2 = ["BBTI", "KRAM", "CHTB", "DEWL", "ELAS", "NEIA", "RSNO", "DIVAD"]
 
 buildWordsTable(words);
 words.sort((a, b) => b.length - a.length)
-document.getElementById("title").innerHTML = "Wordsearch Example"; ``
+document.getElementById("title").innerHTML = "WordSearch"; ``
 buildLettersTable();
 if (theme === 'dark') {
     document.body.style.backgroundColor = "black";
